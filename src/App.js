@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import styles from "./App.module.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends Component {
+  state = {
+    data: null,
+    results: [],
+  };
+
+  componentDidMount() {
+    fetch("https://restcountries.eu/rest/v2/all")
+      .then((res) => res.json())
+      .then((d) => {
+        let names = d.map((item) => item.name);
+        this.setState({ data: names });
+      });
+  }
+
+  inputHandler = (e) => {
+    if (e.target.value === "") {
+      return;
+    }
+    let txt = e.target.value[0].toUpperCase() + e.target.value.slice(1);
+    let filtered = this.state.data.filter((item) => item.startsWith(txt));
+    this.setState({ results: filtered });
+  };
+
+  render() {
+    return this.state.data ? (
+      <div className={styles.App}>
+        <input onChange={(e) => this.inputHandler(e)} />
+        <div
+          hidden={this.state.results.length ? false : true}
+          className={styles.results}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          {this.state.results.length
+            ? this.state.results.map((item) => {
+                return <p key={item}>{item}</p>;
+              })
+            : null}
+        </div>
+      </div>
+    ) : (
+      <h3>Loading...</h3>
+    );
+  }
 }
 
 export default App;
