@@ -8,5 +8,5 @@
 .results {
   width: 200px;
   height: 300px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
